@@ -1,0 +1,15 @@
+# Build output
+dist/
+
+# Prisma
+prisma/migrations/*
+!prisma/migrations/.gitkeep
+
+# Local env
+.env
+
+# Coverage / tests
+coverage/
+
+# Temporary
+.tmp/
