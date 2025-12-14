@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test'
 
 /**
  * Read environment variables from file.
@@ -49,7 +49,7 @@ export default defineConfig({
       use: { ...devices['Desktop Safari'] },
     },
 
-    /* Test against mobile viewports. */
+    /* Test against mobile viewport. */
     // {
     //   name: 'Mobile Chrome',
     //   use: { ...devices['Pixel 5'] },
@@ -76,4 +76,4 @@ export default defineConfig({
   //   url: 'http://localhost:3000',
   //   reuseExistingServer: !process.env.CI,
   // },
-});
+})

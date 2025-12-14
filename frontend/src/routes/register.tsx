@@ -2,6 +2,7 @@ import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
 import { register } from '@/lib/authApi'
 import { useAuthStore } from '@/stores/auth.store'
+import { ApiError } from '@/lib/api'
 
 export const Route = createFileRoute('/register')({
   component: RegisterPage,
@@ -64,8 +65,14 @@ function RegisterPage() {
             const res = await register({ name, email, password })
             setAuth(res)
             await router.navigate({ to: '/dashboard' })
-          } catch (e: any) {
-            setError(e?.message ?? 'Register failed')
+          } catch (e: unknown) {
+            if (e instanceof ApiError) {
+              setError(e.message)
+            } else if (e instanceof Error) {
+              setError(e.message)
+            } else {
+              setError('Register failed')
+            }
           } finally {
             setLoading(false)
           }

@@ -2,19 +2,30 @@ import fp from "fastify-plugin";
 import jwt from "@fastify/jwt";
 import type { FastifyInstance } from "fastify";
 
+type JwtWithSecret = {
+  sign: (
+    payload: object,
+    options?: { secret?: string } & Record<string, any>
+  ) => string;
+  verify: (
+    token: string,
+    options?: { secret?: string } & Record<string, any>
+  ) => any;
+};
+
 export default fp(async (app: FastifyInstance) => {
-  // Access token (default: app.jwt)
   await app.register(jwt, {
     secret: app.config.JWT_ACCESS_SECRET,
   });
 
-  // Refresh token helpers (külön secret-tel, ugyanazon app.jwt instance-en)
+  const jwtAny = app.jwt as unknown as JwtWithSecret;
+
   app.decorate("signRefreshJwt", (payload: object) =>
-    app.jwt.sign(payload, { secret: app.config.JWT_REFRESH_SECRET })
+    jwtAny.sign(payload, { secret: app.config.JWT_REFRESH_SECRET })
   );
 
   app.decorate("verifyRefreshJwt", (token: string) =>
-    app.jwt.verify(token, { secret: app.config.JWT_REFRESH_SECRET })
+    jwtAny.verify(token, { secret: app.config.JWT_REFRESH_SECRET })
   );
 });
 

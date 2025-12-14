@@ -24,7 +24,6 @@ function cookieOptions(app: any) {
     httpOnly: true,
     secure,
     sameSite,
-    // javaslat: auth namespace-re legyen érvényes
     path: "/api/auth",
   } as const;
 }
@@ -51,7 +50,6 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
       data: { email, passwordHash, name, role: "user" },
     });
 
-    // opcionális: azonnali beléptetés register után
     const { accessToken, refreshToken } = await issueTokens(app, user);
     reply.setCookie(refreshCookieName, refreshToken, cookieOptions(app));
 

@@ -72,9 +72,8 @@ function RootLayout() {
                     className="rounded-md border px-3 py-1 text-sm"
                     onClick={async () => {
                       try {
-                        await logout() // ✅ backend törli a refresh cookie-t
+                        await logout()
                       } catch (e) {
-                        // ha valamiért nem sikerül (pl. már lejárt cookie), attól még UI-ban kiléptetünk
                         console.warn('logout failed (ignoring):', e)
                       } finally {
                         clearAuth()

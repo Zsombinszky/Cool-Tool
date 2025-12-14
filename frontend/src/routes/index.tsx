@@ -5,14 +5,14 @@ export const Route = createFileRoute('/')({
   component: HomePage,
 })
 
-function HomePage() {
+export function HomePage() {
   const { user } = useAuthStore()
 
   return (
     <div className="space-y-3">
       <h1 className="text-3xl font-bold">Hello 👋</h1>
       <p className="text-muted-foreground">
-        Mini kurzusok + interjú felkészítők junioroknak.
+        Courses and tutorials to level up your development skills.
       </p>
 
       {user ? (

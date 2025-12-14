@@ -4,14 +4,12 @@ import { bootstrapAuth } from '@/lib/authBootstrap'
 
 export const Route = createFileRoute('/dashboard')({
   beforeLoad: async () => {
-    const { hydrated, user } = useAuthStore.getState()
+    const { hydrated } = useAuthStore.getState()
 
-    // ha még nem futott le a bootstrap, futtassuk le itt
     if (!hydrated) {
       await bootstrapAuth()
     }
 
-    // bootstrap után újra olvasunk
     const s = useAuthStore.getState()
     if (!s.user) throw redirect({ to: '/login' })
   },

@@ -43,7 +43,6 @@ export function bootstrapAuth() {
         console.error('bootstrapAuth unexpected error:', e)
       }
     } finally {
-      // ✅ nagyon fontos: most már dönthet a router/guard
       setHydrated(true)
     }
   })().finally(() => {

@@ -29,7 +29,7 @@ export async function apiFetch<T>(
   const res = await fetch(`${API_BASE}${path}`, {
     ...options,
     headers,
-    credentials: 'include', // <<< refresh cookie miatt KELL
+    credentials: 'include',
   })
 
   if (res.status === 204) {

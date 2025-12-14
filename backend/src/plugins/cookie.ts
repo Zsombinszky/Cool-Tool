@@ -3,6 +3,6 @@ import cookie from "@fastify/cookie";
 
 export default fp(async (app) => {
   await app.register(cookie, {
-    secret: app.config.JWT_REFRESH_SECRET, // opcionális cookie signing
+    secret: app.config.JWT_REFRESH_SECRET,
   });
 });
