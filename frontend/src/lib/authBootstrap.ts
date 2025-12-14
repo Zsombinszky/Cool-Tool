@@ -1,25 +1,54 @@
 import { refresh, me } from '@/lib/authApi'
 import { useAuthStore } from '@/stores/auth.store'
 
-export async function bootstrapAuth() {
-  const { setAccessToken, setAuth, clearAuth } = useAuthStore.getState()
+let bootstrapPromise: Promise<void> | null = null
 
-  try {
-    // 1) próbálunk refresh-elni cookie alapján
-    const r = await refresh()
-    setAccessToken(r.accessToken)
+function isAuthBootstrapError(e: unknown) {
+  const msg = e instanceof Error ? e.message : ''
+  return (
+    msg === 'No refresh token' ||
+    msg === 'Refresh failed' ||
+    msg === 'Invalid refresh token' ||
+    msg === 'Request failed (401)' ||
+    msg === 'Request failed (404)'
+  )
+}
 
-    // 2) me az új access tokennel
-    const m = await me(r.accessToken)
+export function bootstrapAuth() {
+  if (bootstrapPromise) return bootstrapPromise
 
-    if (!m.user) {
+  bootstrapPromise = (async () => {
+    const { setAccessToken, setAuth, clearAuth, setHydrated } =
+      useAuthStore.getState()
+
+    try {
+      const r = await refresh()
+      if (!r?.accessToken) {
+        clearAuth()
+        return
+      }
+      setAccessToken(r.accessToken)
+
+      const m = await me(r.accessToken)
+
+      if (!m.user) {
+        clearAuth()
+        return
+      }
+
+      setAuth({ accessToken: r.accessToken, user: m.user })
+    } catch (e) {
       clearAuth()
-      return
+      if (!isAuthBootstrapError(e)) {
+        console.error('bootstrapAuth unexpected error:', e)
+      }
+    } finally {
+      // ✅ nagyon fontos: most már dönthet a router/guard
+      setHydrated(true)
     }
+  })().finally(() => {
+    bootstrapPromise = null
+  })
 
-    setAuth({ accessToken: r.accessToken, user: m.user })
-  } catch {
-    // ha nincs cookie / lejárt / stb. -> "vendég" állapot
-    clearAuth()
-  }
+  return bootstrapPromise
 }

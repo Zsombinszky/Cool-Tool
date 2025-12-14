@@ -9,6 +9,7 @@ import { Toaster } from '@/components/ui/sonner'
 import { useAuthStore } from '@/stores/auth.store'
 import { useEffect, useState } from 'react'
 import { bootstrapAuth } from '@/lib/authBootstrap'
+import { logout } from '@/lib/authApi'
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootLayout,
@@ -70,9 +71,15 @@ function RootLayout() {
                   <button
                     className="rounded-md border px-3 py-1 text-sm"
                     onClick={async () => {
-                      // frontend oldalon csak store clear + redirect
-                      clearAuth()
-                      await router.navigate({ to: '/login' })
+                      try {
+                        await logout() // ✅ backend törli a refresh cookie-t
+                      } catch (e) {
+                        // ha valamiért nem sikerül (pl. már lejárt cookie), attól még UI-ban kiléptetünk
+                        console.warn('logout failed (ignoring):', e)
+                      } finally {
+                        clearAuth()
+                        await router.navigate({ to: '/login' })
+                      }
                     }}
                   >
                     Log out

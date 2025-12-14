@@ -6,7 +6,7 @@ export type RegisterBody = { email: string; password: string; name?: string }
 
 export type LoginResponse = { accessToken: string; user: AuthUser }
 export type MeResponse = { user: AuthUser | null }
-export type RefreshResponse = { accessToken: string }
+export type RefreshResponse = { accessToken: string } | null
 
 export function login(body: LoginBody) {
   return apiFetch<LoginResponse>('/api/auth/login', {

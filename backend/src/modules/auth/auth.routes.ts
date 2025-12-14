@@ -99,7 +99,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
   // POST /api/auth/refresh
   app.post("/refresh", async (req, reply) => {
     const token = (req.cookies as any)?.[refreshCookieName];
-    if (!token) return reply.code(401).send({ message: "No refresh token" });
+    if (!token) return reply.code(204).send();
 
     let payload: any;
     try {
@@ -133,5 +133,21 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
 
     reply.clearCookie(refreshCookieName, cookieOptions(app));
     return reply.send({ ok: true });
+  });
+
+  // GET /api/auth/me
+  app.get("/me", { preHandler: app.authenticate }, async (req: any) => {
+    const u = req.user as { sub: string; email: string; role: string };
+    const user = await prisma.user.findUnique({ where: { id: u.sub } });
+    if (!user) return { user: null };
+
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      },
+    };
   });
 };

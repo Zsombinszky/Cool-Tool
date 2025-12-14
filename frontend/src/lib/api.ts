@@ -32,6 +32,10 @@ export async function apiFetch<T>(
     credentials: 'include', // <<< refresh cookie miatt KELL
   })
 
+  if (res.status === 204) {
+    return null as T
+  }
+
   const isJson = res.headers.get('content-type')?.includes('application/json')
   const data = isJson ? await res.json().catch(() => null) : null
 
